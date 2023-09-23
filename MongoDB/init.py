@@ -11,10 +11,15 @@ def InitDB():
 
 def GetFunRow(UID:str,funname:str):
     collection = db.FunRow
-    results = collection.find({"uuid":UID,"name":funname})
-    return results
+    result = collection.find({"uuid":UID,"name":funname})
+    return result
 
 def GetSimple(UID:str,Name:str):
     collection = db.SimpleData
-    results = collection.find({"uuid":UID,"name":Name})
-    return results
+    result = collection.find({"uuid":UID,"name":Name})
+    return result
+
+def GetCaseFrameCount(UID:str):
+    collection = db.MainTable
+    result = collection.find({"uuid":UID})
+    return result
