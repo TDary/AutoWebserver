@@ -1,0 +1,27 @@
+.search-box {
+  border: 1px solid #ccc; /* 设置边框样式 */
+  border-radius: 5px; /* 设置圆角边框 */
+  padding: 5px; /* 设置内边距 */
+  width: 200px; /* 设置宽度 */
+  box-sizing: border-box; /* 让边框和内边距不增加元素的总宽度 */
+  background-color: lightblue; /* 设置背景颜色 */
+}
+
+.search-button {
+  background-color: lightblue; /* 设置背景颜色 */
+  border: 1px solid #ccc; /* 设置边框样式 */
+  color: wheat; /* 设置文字颜色为白色 */
+  border: none; /* 移除边框 */
+  margin-top: 5px;
+  padding: 5px; /* 设置内边距 */
+  border-radius: 5px; /* 设置圆角边框 */
+}
+
+.uid-box {
+  border: 1px solid #ccc; /* 设置边框样式 */
+  border-radius: 5px; /* 设置圆角边框 */
+  padding: 5px; /* 设置内边距 */
+  width: 200px; /* 设置宽度 */
+  box-sizing: border-box; /* 让边框和内边距不增加元素的总宽度 */
+  background-color: lightblue; /* 设置背景颜色 */
+}
