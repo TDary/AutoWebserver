@@ -91,7 +91,8 @@ buttonDom.addEventListener('click',function(){
 		data: frameTotal
 		},
 		yAxis: {
-		type: 'value'
+		type: 'value',
+		name:'value',
 		},
 		series: [
 		{

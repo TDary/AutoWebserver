@@ -89,7 +89,7 @@ buttonDom.addEventListener('click',function(){
 		//函数耗时表
 		option = {
 		title: {
-		text: '函数耗时表(单位:ms)',
+		text: '函数耗时表',
 		},
 		tooltip: {
 		trigger: 'axis'
@@ -114,7 +114,8 @@ buttonDom.addEventListener('click',function(){
 		data: frameTotal
 		},
 		yAxis: {
-		type: 'value'
+		type: 'value',
+		name:'单位:ms'
 		},
 		series: [
 		{
@@ -135,7 +136,7 @@ buttonDom.addEventListener('click',function(){
 		//gc表(KB)
 		gcoption = {
 		title: {
-		text: '函数GC表(单位:KB)',
+		text: '函数GC表',
 		},
 		tooltip: {
 		trigger: 'axis'
@@ -160,7 +161,8 @@ buttonDom.addEventListener('click',function(){
 		data: frameTotal
 		},
 		yAxis: {
-		type: 'value'
+		type: 'value',
+		name:'单位:KB'
 		},
 		series: [
 		{
@@ -175,7 +177,7 @@ buttonDom.addEventListener('click',function(){
 		//gc表(KB)
 		calloption = {
 		title: {
-		text: '函数Calls表(单位:次数)',
+		text: '函数Calls表',
 		},
 		tooltip: {
 		trigger: 'axis'
@@ -200,7 +202,8 @@ buttonDom.addEventListener('click',function(){
 		data: frameTotal
 		},
 		yAxis: {
-		type: 'value'
+		type: 'value',
+		name:'单位:次数'
 		},
 		series: [
 		{
