@@ -1,0 +1,24 @@
+message CaseFlameList
+{
+    message CaseFlame
+    {
+        required int32 frame_id = 1;
+
+        message SubData
+        {
+            required int32 name = 1;
+            required int32 total = 2;
+            required int32 self = 3;
+            required int32 calls = 4;
+            required int32 gcalloc = 5;
+            required int32 timems = 6;
+            required int32 selfms = 7;
+            repeated SubData children = 8;
+        }
+
+        required SubData flames = 2;
+    }
+    repeated CaseFlame flames = 1;
+}
+
+

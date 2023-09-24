@@ -38,10 +38,10 @@ buttonDom.addEventListener('click',function(){
 		var allsubFrames = resData["frames"];
 		for(var i=0; i < allsubFrames.length;i++)
 		{
-			funtimedata.push(allsubFrames[i]["timems"]);
-			funselftimedata.push(allsubFrames[i]["selfms"]);
-			fungcdata.push(allsubFrames[i]["gcalloc"]);
-			funcalldata.push(allsubFrames[i]["calls"]);
+			funtimedata.push(allsubFrames[i]["timems"] / 100);
+			funselftimedata.push(allsubFrames[i]["selfms"] / 100);
+			fungcdata.push(allsubFrames[i]["gcalloc"] / 100);
+			funcalldata.push(allsubFrames[i]["calls"] / 100);
 		}
 		} catch (error) {
 	    console.error('Error:', error);
