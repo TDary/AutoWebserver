@@ -3,6 +3,23 @@ import os
 import caseflame_pb2
 import zipfile
 import traceback
+import MongoDB.init
+
+#perl flamegraph.pl -title MainThread -countname ms -width 1350 result.txt > graph.svg
+
+def GetDataForFlameGraph(uuid:str):
+    result = []
+    funnamePath = MongoDB.init.GetCaseFunNamePath(uuid)
+    if funnamePath!=None:
+        res = funnamePath[0]["stack"]
+        for item in res:
+            splitdata = item.split(';')
+            funname = splitdata[len(splitdata) - 1]
+            funrowData = MongoDB.init.GetFunRow(uuid,funname)
+            if funrowData!=None:
+                value = funrowData[0]["avgvalidtime"]
+                result.append(item+" "+value)
+        return result
 
 def unzip_file(zip_path, extract_dir):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:

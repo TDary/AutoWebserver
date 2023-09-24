@@ -1,0 +1,6 @@
+Main Thread 161
+Main Thread;function_A;function_B 40
+Main Thread;function_A 10
+Main Thread;function_B 5
+Main Thread;function_C 3
+Main Thread;function_C;functionD 3

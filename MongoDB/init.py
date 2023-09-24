@@ -23,3 +23,8 @@ def GetCaseFrameCount(UID:str):
     collection = db.MainTable
     result = collection.find({"uuid":UID})
     return result
+
+def GetCaseFunNamePath(UID:str):
+    collection = db.FunNamePath
+    result = collection.find({"uuid":UID})
+    return result
