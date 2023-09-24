@@ -4,6 +4,8 @@ import MongoDB.init as mdb
 import uvicorn
 import os
 import json
+import Parse
+import minioclient
 from fastapi.middleware.cors import CORSMiddleware #解决跨域问题
 
 app = FastAPI()
@@ -23,6 +25,18 @@ app.add_middleware(  #解决跨域
     # 设定浏览器缓存 CORS 响应的最长时间，单位是秒。默认为 600，一般也很少指定
     # max_age=1000
 )
+
+@app.post("/GetOneFunData/{uid}/{frame}")
+def ParseFunStackData(uid:str,frame:int):
+    res = mdb.GetCaseFrameCount(uid)
+    if res!=None:
+        rawfiles = res[0]["rawfiles"]
+        resJson = {
+            "uuid":uid,
+            "funstack":Parse.GetFunStack(rawFiles=rawfiles,frame=frame,uid=uid)
+        }
+        return json.dumps(resJson)
+    return '{"code":200,"msg":"Not Found."}'
 
 @app.post("/GetFrameCount/{uid}")
 def ParseTotalFrame(uid:str):
@@ -63,5 +77,6 @@ def ParseSimpleData(uid:str,funname:str):
 
 if __name__ == '__main__':
     mdb.InitDB()  #初始化数据库
+    minioclient.InitMinio() #初始化minio
     name_app = os.path.splitext(os.path.basename(__file__))[0]
     uvicorn.run(app=f"{name_app}:app", host="0.0.0.0",port=8600)

@@ -7,8 +7,8 @@ fun_map = {}
 def subdata_to_dict(data, value_name : str):
     result = {}
     value = data.__getattribute__(value_name)
-    name = fun_map[data.name] if data.name in fun_map.keys() else "Thread"
-    result['name'] = f"{name} {value}"
+    funname = data.__getattribute__("name")
+    result['name'] = funname
     result['value'] = value
     if data.children != None:
         result["children"] = []
@@ -25,12 +25,11 @@ template_html = ""
 with open("template_html.txt", "r") as file:
     template_html = file.read()
 
-with open("27504554.raw_fun.bin", "rb") as file:
-    my_message = caseflame_pb2.CaseFlameList()
+with open("E:\\MergeData\\09244x\\1695549629.raw_fun.bin", "rb") as file:
+    my_message = caseflame_pb2.ListCaseFlame()
     my_message.ParseFromString(file.read())
-    flames = []
-    flame = my_message.flames[1]
-    result = subdata_to_dict(flame.flames, "timems")
+    flames = my_message.flames[1]
+    result = subdata_to_dict(flames.flame, "timems")
     
     with open("1.html", "w") as f:
         f.write(template_html.replace("#DATA#", json.dumps(result)))
