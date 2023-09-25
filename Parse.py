@@ -5,21 +5,39 @@ import zipfile
 import traceback
 import MongoDB.init
 
-#perl flamegraph.pl -title MainThread -countname ms -width 1350 result.txt > graph.svg
-
+#todo:将源文件txt转换成svg
 def GetDataForFlameGraph(uuid:str):
+    flamaeGraphObjes = minioclient.minioClient.list_objects(bucket_name=minioclient.analyzeBucket,prefix=uuid)
+    uploadobjectName = uuid + "/" + uuid + ".txt"
+    for item in flamaeGraphObjes:
+        if item._object_name == uploadobjectName:
+            return "http://10.11.144.31:8001/analyzedata/" +uploadobjectName
     result = []
     funnamePath = MongoDB.init.GetCaseFunNamePath(uuid)
-    if funnamePath!=None:
-        res = funnamePath[0]["stack"]
+    for fnP in funnamePath:
+        res = fnP["stack"]
         for item in res:
-            splitdata = item.split(';')
-            funname = splitdata[len(splitdata) - 1]
-            funrowData = MongoDB.init.GetFunRow(uuid,funname)
-            if funrowData!=None:
-                value = funrowData[0]["avgvalidtime"]
-                result.append(item+" "+value)
-        return result
+            if ';' in item:
+                splitdata = item.split(';')
+                funname = splitdata[len(splitdata) - 1]
+                funrowData = MongoDB.init.GetFunRow(uuid,funname)
+                for data in funrowData:
+                    value =data["avgvalidtime"] / 100
+                    addStr = f"{item} {str(value)}"
+                    result.append(addStr)
+            else:
+                funname = item
+                funrowData = MongoDB.init.GetFunRow(uuid,funname)
+                for data in funrowData:
+                    value =data["avgvalidtime"] / 100
+                    addStr = f"{item} {str(value)}"
+                    result.append(addStr)
+        writeFilepath = "./"+uuid+".txt"
+        with open(writeFilepath,"w",encoding="utf-8") as file:
+            file.writelines(line + "\n" for line in result)
+        minioclient.minioClient.fput_object(bucket_name=minioclient.analyzeBucket,object_name=uploadobjectName,file_path=writeFilepath,content_type="application/txt")
+        os.remove(writeFilepath)
+        return "http://10.11.144.31:8001/analyzedata/"+ uploadobjectName #url
 
 def unzip_file(zip_path, extract_dir):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:

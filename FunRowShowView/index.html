@@ -2,20 +2,13 @@
 <html lang="zh-CN" style="height: 100%">
 <head>
 	<link rel="stylesheet" href="css/view.css"/>
-  <meta charset="utf-8">
+	<meta charset="utf-8">
 </head>
 <body style="height: 100%; margin: 0">
 	<div>
-		<input id="inputuid" type="search" name="UIDinput" placeholder="请输入UUID" class="uid-box"/>
-		<input id="inputfunname" type="search" name="search" placeholder="请输入函数名" class="search-box"/>
-		<input id="button-id" type="submit" value="查询函数数据" class="search-button"/>
+		<button id="btn-id" class="btn-class">SpeedCope视图(FlameGraph)</button>
+		<button id="btn2-id" class="btn-class">函数表视图</button>
 	</div>
-	<div id="timecontainer" style="height: 100%"></div>
-	<div id="gccontainer" style="height: 100%"></div>
-	<div id="callcontainer" style="height: 100%"></div>
-	
-<script src="js/echarts.min.js"></script>
-<script src="js/chart.js"></script>
-
+	<script src="js/SwitchView.js"></script>
 </body>
 </html>

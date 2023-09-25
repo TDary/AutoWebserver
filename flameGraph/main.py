@@ -4,6 +4,8 @@ import json
 
 fun_map = {}
 
+#perl flamegraph.pl -title MainThread -countname ms -width 1350 result.txt > graph.svg
+
 def subdata_to_dict(data, value_name : str):
     result = {}
     value = data.__getattribute__(value_name)
