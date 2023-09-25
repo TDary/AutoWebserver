@@ -30,7 +30,11 @@ app.add_middleware(  #解决跨域
 def ParseCaseFlameGraph(uid:str):
     res = Parse.GetDataForFlameGraph(uid)
     if res!=[]:
-        return str(res)
+        resJson = {
+            "uuid":uid,
+            "url":res
+        }
+        return json.dumps(resJson)
     return '{"code":200,"msg":"Data is None."}'
 
 @app.post("/GetOneFunData/{uid}/{frame}")

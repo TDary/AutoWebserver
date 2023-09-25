@@ -22,16 +22,24 @@ def GetDataForFlameGraph(uuid:str):
                 funname = splitdata[len(splitdata) - 1]
                 funrowData = MongoDB.init.GetFunRow(uuid,funname)
                 for data in funrowData:
-                    value =data["avgvalidtime"] / 100
-                    addStr = f"{item} {str(value)}"
-                    result.append(addStr)
+                    value =data["avgvalidtime"]
+                    if funname == "PlayerLoop":
+                        addStr = f"{item} 0"
+                        result.append(addStr)
+                    else:
+                        addStr = f"{item} {str(value)}"
+                        result.append(addStr)
             else:
                 funname = item
                 funrowData = MongoDB.init.GetFunRow(uuid,funname)
                 for data in funrowData:
-                    value =data["avgvalidtime"] / 100
-                    addStr = f"{item} {str(value)}"
-                    result.append(addStr)
+                    value =data["avgvalidtime"]
+                    if funname == "PlayerLoop":
+                        addStr = f"{item} 0"
+                        result.append(addStr)
+                    else:
+                        addStr = f"{item} {str(value)}"
+                        result.append(addStr)
         writeFilepath = "./"+uuid+".txt"
         with open(writeFilepath,"w",encoding="utf-8") as file:
             file.writelines(line + "\n" for line in result)
