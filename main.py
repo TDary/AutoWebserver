@@ -40,8 +40,8 @@ def ParseCaseFlameGraph(uid:str):
 @app.post("/GetOneFunData/{uid}/{frame}")
 def ParseFunStackData(uid:str,frame:int):
     res = mdb.GetCaseFrameCount(uid)
-    if res!=None:
-        rawfiles = res[0]["rawfiles"]
+    for item in res:
+        rawfiles = item["rawfiles"]
         resJson = {
             "uuid":uid,
             "funstack":Parse.GetFunStack(rawFiles=rawfiles,frame=frame,uid=uid)
@@ -52,10 +52,10 @@ def ParseFunStackData(uid:str,frame:int):
 @app.post("/GetFrameCount/{uid}")
 def ParseTotalFrame(uid:str):
     res = mdb.GetCaseFrameCount(uid)
-    if res!=None:
+    for item in res:
         resForjson = {
             "uuid":uid,
-            "frametotalcount":res[0]["frametotalcount"]
+            "frametotalcount":item["frametotalcount"]
         }
         return json.dumps(resForjson)
     return '{"code":200,"msg":"Not Found."}'
@@ -64,11 +64,12 @@ def ParseTotalFrame(uid:str):
 @app.post("/GetFunRow/{uid}/{funname}")
 def ParseFunRow(uid:str,funname:str):
     res = mdb.GetFunRow(uid,funname)
-    if res!=None:
+    for item in res:
+        frames = Parse.GetFormatData(uid,item["frames"])
         resForjson = {
             "uuid":uid,
             "name":funname,
-            "frames":res[0]["frames"]
+            "frames":frames
         }
         return json.dumps(resForjson)
     return '{"code":200,"msg":"Not Found."}'
@@ -77,11 +78,11 @@ def ParseFunRow(uid:str,funname:str):
 @app.post("/GetSimpleData/{uid}/{funname}")
 def ParseSimpleData(uid:str,funname:str):
     res = mdb.GetSimple(uid,funname)
-    if res!=None:
+    for item in res:
         resForjson = {
             "uuid":uid,
             "name":funname,
-            "values":res[0]["values"]
+            "values":item["values"]
         }
         return json.dumps(resForjson)
     return '{"code":200,"msg":"Not Found."}'

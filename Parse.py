@@ -5,6 +5,32 @@ import zipfile
 import traceback
 import MongoDB.init
 
+def GetFormatData(uid:str,data):
+    fCount = MongoDB.init.GetCaseFrameCount(uid)
+    frameCount = 0
+    for f in fCount:
+        frameCount = f["frametotalcount"]
+    res = []
+    j = 0
+    for i in range(1,frameCount):
+        if  j < len(data) and  data[j]["frame"] == i:
+            addObject = {}
+            addObject["timems"] = data[j]["timems"]
+            addObject["selfms"] = data[j]["selfms"]
+            addObject["gcalloc"] = data[j]["gcalloc"]
+            addObject["calls"] = data[j]["calls"]
+            res.append(addObject)
+            j+=1
+            continue
+        else:
+            addObject = {}
+            addObject["timems"] = 0
+            addObject["selfms"] = 0
+            addObject["gcalloc"] = 0
+            addObject["calls"] = 0
+            res.append(addObject)
+    return res
+
 #todo:将源文件txt转换成svg
 def GetDataForFlameGraph(uuid:str):
     flamaeGraphObjes = minioclient.minioClient.list_objects(bucket_name=minioclient.analyzeBucket,prefix=uuid)
