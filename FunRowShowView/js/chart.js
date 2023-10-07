@@ -4,7 +4,17 @@ var calldom = document.getElementById('callcontainer');
 var buttonDom = document.getElementById('button-id');
 var inputUID = document.getElementById('inputuid');
 var inputFunName = document.getElementById('inputfunname');
-	
+
+function AlertError(msg) {
+            // 使用 SweetAlert 替代 alert
+            Swal.fire({
+                title: '错误提示',
+                text: msg,
+                icon: 'error',
+                confirmButtonText: '确定'
+            });
+        }
+
 buttonDom.addEventListener('click',function(){
 	// // 构造请求数据
 	var funrowurl = 'http://10.11.144.31:8600/GetFunRow/';  // 请求的URL
@@ -22,6 +32,7 @@ buttonDom.addEventListener('click',function(){
 	      throw new Error('Network response was not ok.');
 	    }
 	    const data = await response.json();
+		// console.log("returnData:"+data);
 		//初始化数据
 		var funnameList = [];
 		var funname = String;
@@ -30,17 +41,24 @@ buttonDom.addEventListener('click',function(){
 		var fungcdata = [];
 		var funcalldata = [];
 		
-		var resData = JSON.parse(data);
-		funname = inputFunName.value;
-		funnameList.push(funname);
-		funnameList.push('(SelfTime)'+funname);
-		var allsubFrames = resData["frames"];
-		for(var i=0; i < allsubFrames.length;i++)
-		{
-			funtimedata.push(allsubFrames[i]["timems"] / 100);
-			funselftimedata.push(allsubFrames[i]["selfms"] / 100);
-			fungcdata.push(allsubFrames[i]["gcalloc"] / 100);
-			funcalldata.push(allsubFrames[i]["calls"] / 100);
+		var origindata = JSON.parse(data);
+		var resData = origindata["msg"];
+		if (origindata["code"] == 200){
+			funname = inputFunName.value;
+			funnameList.push(funname);
+			funnameList.push('(SelfTime)'+funname);
+			var allsubFrames = resData["frames"];
+			for(var i=0; i < allsubFrames.length;i++)
+			{
+				funtimedata.push(allsubFrames[i]["timems"] / 100);
+				funselftimedata.push(allsubFrames[i]["selfms"] / 100);
+				fungcdata.push(allsubFrames[i]["gcalloc"] / 100);
+				funcalldata.push(allsubFrames[i]["calls"] / 100);
+			}
+		}
+		else{
+			AlertError("未找到当前函数名："+inputFunName.value);
+			throw origindata["msg"];
 		}
 		return{
 			prop1:funnameList,
@@ -68,49 +86,36 @@ buttonDom.addEventListener('click',function(){
 		//初始化
 		var frameTotal = [];
 
-		
-		var res = JSON.parse(data);
-		var frame = res["frametotalcount"];
-		for(var i=1;i<=parseInt(frame);i++){
-			frameTotal.push(i.toString());
+		var origindata = JSON.parse(data);
+		var res = origindata["msg"];
+		if(origindata["code"] == 200){
+			var frame = res["frametotalcount"];
+			for(var i=1;i<=parseInt(frame);i++){
+				frameTotal.push(i.toString());
+			}
+			console.log(data);
+		}
+		else{
+			throw Error(origindata["msg"]);
 		}
 		
-	    console.log(data);
-		
 		inputdata.then(result => {
-			// var funnameList = [];
-			// var funname = String;
-			// var funtimedata = [];
-			// var funselftimedata = [];
-			// var fungcdata = [];
-			// var funcalldata = [];
-			
-			// funnameList = result.prop1;
-			// funname = result.prop2;
-		 //    funtimedata = result.prop3;
-		 //    funselftimedata = result.prop4;
-		 //    fungcdata = result.prop5;
-		 //    funcalldata = result.prop6;
-			
-		 //  console.log(funnameList);
-		 //  console.log(funname);
-		 //  console.log(funtimedata);
-		 //  console.log(funselftimedata);
-		 //  console.log(fungcdata);
-		 //  console.log(funcalldata);
+		  if(result == null || undefined){
+				throw Error("null object");
+		  }
 		  
 		  //绘制
 		  var timeChart = echarts.init(timedom, null, {  //耗时表
-		    renderer: 'canvas',
-		    useDirtyRect: false
+			renderer: 'canvas',
+			useDirtyRect: false
 		  });
 		  var gcChart = echarts.init(gcdom, null, { //GC表
-		    renderer: 'canvas',
-		    useDirtyRect: false
+			renderer: 'canvas',
+			useDirtyRect: false
 		  });
 		  var callChart = echarts.init(calldom, null, { //Call调用次数表
-		    renderer: 'canvas',
-		    useDirtyRect: false
+			renderer: 'canvas',
+			useDirtyRect: false
 		  });
 		  
 		  var app = {};
@@ -138,7 +143,7 @@ buttonDom.addEventListener('click',function(){
 		  },
 		  toolbox: {
 		  feature: {
-		    saveAsImage: {}
+			saveAsImage: {}
 		  }
 		  },
 		  xAxis: {
@@ -152,16 +157,16 @@ buttonDom.addEventListener('click',function(){
 		  },
 		  series: [
 		  {
-		    name: result.prop2,
-		    type: 'line',
-		    stack: 'Total',
-		    data: result.prop3
+			name: result.prop2,
+			type: 'line',
+			stack: 'Total',
+			data: result.prop3
 		  },
 		  {
-		    name: '(SelfTime)'+result.prop2,
-		    type: 'line',
-		    stack: 'Total',
-		    data: result.prop4
+			name: '(SelfTime)'+result.prop2,
+			type: 'line',
+			stack: 'Total',
+			data: result.prop4
 		  },
 		  ]
 		  };
@@ -185,7 +190,7 @@ buttonDom.addEventListener('click',function(){
 		  },
 		  toolbox: {
 		  feature: {
-		    saveAsImage: {}
+			saveAsImage: {}
 		  }
 		  },
 		  xAxis: {
@@ -199,10 +204,10 @@ buttonDom.addEventListener('click',function(){
 		  },
 		  series: [
 		  {
-		    name: result.prop2,
-		    type: 'line',
-		    stack: 'Total',
-		    data: result.prop5
+			name: result.prop2,
+			type: 'line',
+			stack: 'Total',
+			data: result.prop5
 		  },
 		  ]
 		  };
@@ -226,7 +231,7 @@ buttonDom.addEventListener('click',function(){
 		  },
 		  toolbox: {
 		  feature: {
-		    saveAsImage: {}
+			saveAsImage: {}
 		  }
 		  },
 		  xAxis: {
@@ -240,10 +245,10 @@ buttonDom.addEventListener('click',function(){
 		  },
 		  series: [
 		  {
-		    name: result.prop2,
-		    type: 'line',
-		    stack: 'Total',
-		    data: result.prop6
+			name: result.prop2,
+			type: 'line',
+			stack: 'Total',
+			data: result.prop6
 		  },
 		  ]
 		  };

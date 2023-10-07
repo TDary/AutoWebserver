@@ -34,8 +34,13 @@ def ParseCaseFlameGraph(uid:str):
             "uuid":uid,
             "url":res
         }
-        return json.dumps(resJson)
-    return '{"code":200,"msg":"Data is None."}'
+        res = {
+            "code":200,
+            "msg":resJson
+        }
+        resData = json.dumps(res)
+        return resData
+    return '{"code":404,"msg":"Data is None."}'
 
 @app.post("/GetOneFunData/{uid}/{frame}")
 def ParseFunStackData(uid:str,frame:int):
@@ -46,8 +51,13 @@ def ParseFunStackData(uid:str,frame:int):
             "uuid":uid,
             "funstack":Parse.GetFunStack(rawFiles=rawfiles,frame=frame,uid=uid)
         }
-        return json.dumps(resJson)
-    return '{"code":200,"msg":"Not Found."}'
+        res = {
+            "code":200,
+            "msg":resJson
+        }
+        resData = json.dumps(res)
+        return resData
+    return '{"code":404,"msg":"Not Found."}'
 
 @app.post("/GetFrameCount/{uid}")
 def ParseTotalFrame(uid:str):
@@ -57,8 +67,13 @@ def ParseTotalFrame(uid:str):
             "uuid":uid,
             "frametotalcount":item["frametotalcount"]
         }
-        return json.dumps(resForjson)
-    return '{"code":200,"msg":"Not Found."}'
+        res = {
+            "code":200,
+            "msg":resForjson
+        }
+        resData = json.dumps(res)
+        return resData
+    return '{"code":404,"msg":"Not Found."}'
 
 #函数统计数据
 @app.post("/GetFunRow/{uid}/{funname}")
@@ -71,8 +86,13 @@ def ParseFunRow(uid:str,funname:str):
             "name":funname,
             "frames":frames
         }
-        return json.dumps(resForjson)
-    return '{"code":200,"msg":"Not Found."}'
+        res = {
+            "code":200,
+            "msg":resForjson
+        }
+        resData = json.dumps(res)
+        return resData
+    return '{"code":404,"msg":"Not Found."}'
 
 #基础性能数据
 @app.post("/GetSimpleData/{uid}/{funname}")
@@ -84,8 +104,13 @@ def ParseSimpleData(uid:str,funname:str):
             "name":funname,
             "values":item["values"]
         }
-        return json.dumps(resForjson)
-    return '{"code":200,"msg":"Not Found."}'
+        res = {
+            "code":200,
+            "msg":resForjson
+        }
+        resData = json.dumps(res)
+        return resData
+    return '{"code":404,"msg":"Not Found."}'
 
 if __name__ == '__main__':
     mdb.InitDB()  #初始化数据库
