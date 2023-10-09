@@ -42,14 +42,17 @@ def ParseCaseFlameGraph(uid:str):
         return resData
     return '{"code":404,"msg":"Data is None."}'
 
-@app.post("/GetOneFunData/{uid}/{frame}")
-def ParseFunStackData(uid:str,frame:int):
+@app.post("/GetOneFunData/{uid}/{frame}/{type}")
+def ParseFunStackData(uid:str,frame:int,type:str):
     res = mdb.GetCaseFrameCount(uid)
     for item in res:
         rawfiles = item["rawfiles"]
+        stackData = Parse.GetFunStack(rawFiles=rawfiles,frame=frame,uid=uid,type=type)
+        if stackData == None:
+            return '{"code":404,"msg":"Not Found."}'
         resJson = {
             "uuid":uid,
-            "funstack":Parse.GetFunStack(rawFiles=rawfiles,frame=frame,uid=uid)
+            "funstack":stackData
         }
         res = {
             "code":200,

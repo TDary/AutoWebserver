@@ -3,20 +3,25 @@
 	<head>
 		<link rel="stylesheet" href="css/view.css"/>
 		<!-- 引入 SweetAlert 库 -->
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+		<link rel="stylesheet" href="css/cdn.jsdelivr.net_npm_sweetalert2@11.0.19_dist_sweetalert2.min.css">
+		<!-- 引入flamegraph -->
+		<link rel="stylesheet" type="text/css" href="css/cdn.jsdelivr.net_npm_d3-flame-graph@4.1.3_dist_d3-flamegraph.css">
 		<meta charset="utf-8">
 		<title>CaseFun View</title>
 	</head>
 	<body style="height: 100%; margin: 0">
-		<div>
-				<input id="inputuid" type="search" name="UIDinput" placeholder="请输入UUID" class="uid-box"/>
-				<input id="inputfunname" type="search" name="search" placeholder="请输入函数名" class="search-box"/>
-				<input id="button-id" type="submit" value="查询函数数据" class="search-button"/>
+		<div class="root">
+			<div>
+					<input id="inputuid" type="search" name="UIDinput" placeholder="请输入UUID" class="uid-box"/>
+					<input id="inputfunname" type="search" name="search" placeholder="请输入函数名" class="search-box"/>
+					<input id="button-id" type="submit" value="查询函数数据" class="search-button"/>
+			</div>
+			<div id="timecontainer" style="height: 300px"></div>
+			<div id="gccontainer" style="height: 300px"></div>
+			<div id="callcontainer" style="height: 300px"></div>
 		</div>
-		<div id="timecontainer" style="height: 300px"></div>
-		<div id="gccontainer" style="height: 300px"></div>
-		<div id="callcontainer" style="height: 300px"></div>
-		
+		<script src="js/d3js.org_d3.v7.js"></script>
+		<script src="js/cdn.jsdelivr.net_npm_d3-flame-graph@4.1.3_dist_d3-flamegraph.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
 		<script src="js/echarts.min.js"></script>
 		<script src="js/chart.js"></script>

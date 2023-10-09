@@ -4,6 +4,7 @@ import caseflame_pb2
 import zipfile
 import traceback
 import MongoDB.init
+import json
 
 def GetFormatData(uid:str,data):
     fCount = MongoDB.init.GetCaseFrameCount(uid)
@@ -79,32 +80,22 @@ def unzip_file(zip_path, extract_dir):
             zip_ref.extract(file_info, extract_dir)
 
 
-def subdata_to_dict(data):
+def TransSubData(data,value_name:str):
     result = {}
-    name = data.__getattribute__("name")
-    total = data.__getattribute__("total")
-    selfs = data.__getattribute__("self")
-    calls = data.__getattribute__("calls")
-    gcalloc = data.__getattribute__("gcalloc")
-    timems = data.__getattribute__("timems")
-    selfms = data.__getattribute__("selfms")
-    result['name'] = name
-    result['total'] = total
-    result['self'] = selfs
-    result['calls'] = calls
-    result['gcalloc'] = gcalloc
-    result['timems'] = timems
-    result['selfms'] = selfms
+    value = data.__getattribute__(value_name)
+    funname = data.__getattribute__("name")
+    result['name'] = funname
+    result['value'] = value / 100
     if data.children != None:
         result["children"] = []
         for child_subdata in data.children:
-            child_subdata_dict = subdata_to_dict(child_subdata)
+            child_subdata_dict = TransSubData(child_subdata,value_name)
             if child_subdata_dict != None:
                 result["children"].append(child_subdata_dict)
     return result
 
 # 解析帧号落位具体在哪个文件上
-def GetFunStack(rawFiles,frame:int,uid:str):
+def GetFunStack(rawFiles,frame:int,uid:str,type:str):
     f = 0
     for file in rawFiles:
         f +=298
@@ -122,6 +113,7 @@ def GetFunStack(rawFiles,frame:int,uid:str):
                     unzip_file(localPath,"./")
                     funstackFile = "./"+file.split('.')[0]+".raw_fun.bin"
                     funrowFile = "./"+file.split('.')[0]+".raw_funrow.bin"
+                    funnameFile = "./"+file.split('.')[0]+".raw_funname.bin"
                     resData = {}
                     with open(funstackFile, "rb") as file:
                         while(True):
@@ -130,15 +122,17 @@ def GetFunStack(rawFiles,frame:int,uid:str):
                                 my_message = caseflame_pb2.ListCaseFlame()
                                 my_message.ParseFromString(file.read())
                                 flames = my_message.flames[i]
-                                resData = subdata_to_dict(flames.flame)
+                                resData = TransSubData(flames.flame,type)
                                 break
                             f += 1
                             i += 1
                     os.remove(localPath)
                     os.remove(funstackFile)
                     os.remove(funrowFile)
+                    os.remove(funnameFile)
                     return resData
                 else:
                     print("当前存储桶不存在~"+minioclient.analyzeBucket)
             except Exception as err:
                     traceback.print_exception()
+                    return None

@@ -5,6 +5,33 @@ var buttonDom = document.getElementById('button-id');
 var inputUID = document.getElementById('inputuid');
 var inputFunName = document.getElementById('inputfunname');
 
+// var pages = document.getElementsByClassName('page'); // 获取所有页面的元素
+// function ShowNextPage() {
+//   var currentPage = getCurrentPage(); // 获取当前显示的页面索引
+//   if (currentPage < pages.length - 1) {
+//     pages[currentPage].style.display = 'none'; // 隐藏当前页面
+//     pages[currentPage + 1].style.display = 'block'; // 显示下一页
+//   }
+// }
+
+// function GetCurrentPage() {
+//   for (var i = 0; i < pages.length; i++) {
+//     if (pages[i].style.display === 'block') {
+//       return i; // 返回当前显示的页面索引
+//     }
+//   }
+// }
+
+// function showFloatingAlert() {
+//   var floatingAlert = document.getElementById('floating-alert');
+//   floatingAlert.style.display = 'block'; // 显示悬浮窗口
+// }
+
+// function hideFloatingAlert() {
+//   var floatingAlert = document.getElementById('floating-alert');
+//   floatingAlert.style.display = 'none'; // 隐藏悬浮窗口
+// }
+
 function AlertError(msg) {
             // 使用 SweetAlert 替代 alert
             Swal.fire({
@@ -14,9 +41,66 @@ function AlertError(msg) {
                 confirmButtonText: '确定'
             });
         }
+		
+function PrintDetailFun(datainfo,frame,funname,type){
+	var infodata = {};
+	datainfo.then(result => {
+	  if(result == null || undefined){
+			throw Error("null object");
+	  }
+	  console.log(result);
+	  Swal.fire({
+	    title: '<strong>第【' + frame + '】帧【' + funname + '】' + type + '堆栈数据</strong>',
+	    icon: 'info',
+	    html:
+	      '<div id="chart"></div>',
+	    showCloseButton: true,
+	    showConfirmButton:false,
+	    showCancelButton: false,
+	    focusConfirm: false,
+	  });
+	  var chart = flamegraph().width(960);
+	  var data = result;
+	  d3.select("#chart").datum(data).call(chart);
+	}).catch(error => {
+		// 处理错误
+		console.error(error);
+	});
+}
+
+async function GetOneStackData(uuid,frame,type){
+	var url = 'http://10.11.144.31:8600/GetOneFunData/';  // 请求的URL
+	url += uuid+'/'+frame+'/'+type;
+	try {
+	  const response = await fetch(url,{method:'POST',headers:
+				{'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',
+				'Content-Length':'<calculated when request is sent>',
+				'Host':'<calculated when request is sent>',
+				'Accept':'*/*',
+				}
+			});
+	  if (!response.ok) {
+	    throw new Error('Network response was not ok.');
+	  }
+	  const data = await response.json();
+	  var origindata = JSON.parse(data);
+	  var resdata = origindata["msg"]["funstack"];
+	  if(origindata["code"]==200){
+		console.log(resdata);
+	  }
+	  else{
+		  AlertError("当前帧无堆栈数据函数名");
+		  throw origindata["msg"];
+	  }
+	  return resdata;
+	  } catch (error) {
+	  console.error('Error:', error);
+	  }
+}
+
 
 buttonDom.addEventListener('click',function(){
-	// // 构造请求数据
+	// 构造请求数据获取详细帧数据
 	var funrowurl = 'http://10.11.144.31:8600/GetFunRow/';  // 请求的URL
 	funrowurl += inputUID.value+'/'+inputFunName.value;
 	async function fetchframeData() {
@@ -73,7 +157,7 @@ buttonDom.addEventListener('click',function(){
 		}
 	}
 	
-	//获取主要总帧数  构造请求数据
+	//获取主要总帧数构造函数
 	var frameurl = 'http://10.11.144.31:8600/GetFrameCount/';  // 请求的URL
 	frameurl += inputUID.value;
 	async function fetchframecountData(inputdata) {
@@ -127,7 +211,7 @@ buttonDom.addEventListener('click',function(){
 		  //函数耗时表
 		  option = {
 		  title: {
-		  text: '函数耗时表',
+		  text: '函数耗时表(ms)',
 		  },
 		  tooltip: {
 		  trigger: 'axis'
@@ -174,7 +258,7 @@ buttonDom.addEventListener('click',function(){
 		  //gc表(KB)
 		  gcoption = {
 		  title: {
-		  text: '函数GC表',
+		  text: '函数GC表(KB)',
 		  },
 		  tooltip: {
 		  trigger: 'axis'
@@ -215,7 +299,7 @@ buttonDom.addEventListener('click',function(){
 		  //gc表(KB)
 		  calloption = {
 		  title: {
-		  text: '函数Calls表',
+		  text: '函数Calls表(次)',
 		  },
 		  tooltip: {
 		  trigger: 'axis'
@@ -255,12 +339,30 @@ buttonDom.addEventListener('click',function(){
 		  
 		  if (option && typeof option === 'object') {
 		  timeChart.setOption(option);
+		  timeChart.on('click',function(params){
+			  //帧号params.dataIndex 帧数据params.data
+			  var typedata = "timems";
+			  var resDa = GetOneStackData(inputUID.value,params.dataIndex+1,typedata);
+			  PrintDetailFun(resDa,params.dataIndex+1,inputFunName.value,typedata);
+		  });
 		  }
 		  if (gcoption && typeof gcoption === 'object') {
 		  gcChart.setOption(gcoption);
+		  gcChart.on('click',function(params){
+			  //帧号params.dataIndex 帧数据params.data
+			  var typedata = "gcalloc";
+			  var resDa = GetOneStackData(inputUID.value,params.dataIndex+1,typedata);
+			  PrintDetailFun(resDa,params.dataIndex+1,inputFunName.value,typedata);
+		  });
 		  }
 		  if (calloption && typeof calloption === 'object') {
 		  callChart.setOption(calloption);
+		  callChart.on('click',function(params){
+			  //帧号params.dataIndex 帧数据params.data
+			  var typedata = "calls";
+			  var resDa = GetOneStackData(inputUID.value,params.dataIndex+1,typedata);
+			  PrintDetailFun(resDa,params.dataIndex+1,inputFunName.value,typedata);
+		  });
 		  }
 		  
 		  window.addEventListener('resize', timeChart.resize);
