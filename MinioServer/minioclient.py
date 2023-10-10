@@ -4,6 +4,7 @@ minioClient = None
 rawBucket = 'rawdata'# 源文件存储桶名
 analyzeBucket = 'analyzedata' #解析后存储桶名
 
+#minio封装类
 class MinioServe:
     def __init__(self,url,user,password):
         global minioClient

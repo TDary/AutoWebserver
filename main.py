@@ -33,6 +33,7 @@ app.add_middleware(  #解决跨域
     # max_age=1000
 )
 
+#获取整体案例火焰图
 @app.get("/GetCaseFlameGraph/{uid}")
 def ParseCaseFlameGraph(uid:str):
     res = Parse.GetDataForFlameGraph(DataBase,uid)
@@ -49,6 +50,7 @@ def ParseCaseFlameGraph(uid:str):
         return resData
     return '{"code":404,"msg":"Data is None."}'
 
+#获取单帧堆栈函数信息
 @app.post("/GetOneFunData/{uid}/{frame}/{type}")
 def ParseFunStackData(uid:str,frame:int,type:str):
     res = DataBase.GetCaseFrameCount(uid)
@@ -69,6 +71,7 @@ def ParseFunStackData(uid:str,frame:int,type:str):
         return resData
     return '{"code":404,"msg":"Not Found."}'
 
+#获取案例总帧数
 @app.post("/GetFrameCount/{uid}")
 def ParseTotalFrame(uid:str):
     res = DataBase.GetCaseFrameCount(uid)
@@ -122,6 +125,7 @@ def ParseSimpleData(uid:str,funname:str):
         return resData
     return '{"code":404,"msg":"Not Found."}'
 
+#服务启动入口
 if __name__ == '__main__':
     name_app = os.path.splitext(os.path.basename(__file__))[0]
     uvicorn.run(app=f"{name_app}:app", host="0.0.0.0",port=8600)

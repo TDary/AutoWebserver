@@ -5,6 +5,7 @@ import zipfile
 import traceback
 import MongoDB.init
 
+#从数据库获取数据
 def GetFormatData(db:MongoDB.init.DB,uid:str,data):
     fCount = db.GetCaseFrameCount(uid)
     frameCount = 0
@@ -13,7 +14,7 @@ def GetFormatData(db:MongoDB.init.DB,uid:str,data):
     res = []
     j = 0
     for i in range(1,frameCount):
-        if  j < len(data) and  data[j]["frame"] == i:
+        if  j < len(data) and data[j]["frame"] == i:
             addObject = {}
             addObject["timems"] = data[j]["timems"]
             addObject["selfms"] = data[j]["selfms"]
@@ -31,6 +32,7 @@ def GetFormatData(db:MongoDB.init.DB,uid:str,data):
             res.append(addObject)
     return res
 
+#获取数据并进行火焰图转换
 def GetDataForFlameGraph(db:MongoDB.init.DB,uuid:str):
     flamaeGraphObjes = minioclient.minioClient.list_objects(bucket_name=minioclient.analyzeBucket,prefix=uuid)
     uploadobjectName = uuid + "/" + uuid + ".txt"
@@ -72,12 +74,13 @@ def GetDataForFlameGraph(db:MongoDB.init.DB,uuid:str):
         os.remove(writeFilepath)
         return "http://10.11.144.31:8001/analyzedata/"+ uploadobjectName #url
 
+#解压缩
 def unzip_file(zip_path, extract_dir):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         for file_info in zip_ref.infolist():
             zip_ref.extract(file_info, extract_dir)
 
-
+#转换层级结构，适用于flamegraph
 def TransSubData(data,value_name:str):
     result = {}
     value = data.__getattribute__(value_name)

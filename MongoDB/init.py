@@ -2,6 +2,7 @@ from ctypes import Array
 from pymongo import MongoClient
 
 db = None
+#MongoDB数据库封装类
 class DB:
     def __init__(self,ip,port,database):
         global db
