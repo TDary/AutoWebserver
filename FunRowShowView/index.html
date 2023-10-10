@@ -2,13 +2,26 @@
 <html lang="zh-CN" style="height: 100%">
 	<head>
 		<link rel="stylesheet" href="css/view.css" />
+		<link rel="stylesheet" href="css/view.css"/>
+		<!-- 引入 SweetAlert 库 -->
+		<link rel="stylesheet" href="css/cdn.jsdelivr.net_npm_sweetalert2@11.0.19_dist_sweetalert2.min.css">
 		<meta charset="utf-8">
 	</head>
 	<body>
 		<div>
+			<input id="uid-input" type="search" name="UID-input" placeholder="请输入UUID" class="uid-box"/>
+			<input id="btn-search-caseflame" type="submit" value="查询案例火焰图数据" class="search-button"/>
+			<b style="color: coral;">|</b>
 			<button id="btn-id" class="btn-class">SpeedCope视图(FlameGraph)</button>
+			<b style="color: coral;">|</b>
 			<button id="btn2-id" class="btn-class">函数表视图</button>
 		</div>
+		<h2 style="color: chocolate;">报告列表</h2>
+		<hr/>
+		<div>
+			<span>None Data</span>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
 		<script src="js/SwitchView.js"></script>
 	</body>
 </html>

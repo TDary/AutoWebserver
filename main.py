@@ -8,11 +8,17 @@ import Parse
 import MinioServer.minioclient as minioclient
 from fastapi.middleware.cors import CORSMiddleware #解决跨域问题
 
+DeseriliazeData = None
+#读取配置文件并反序列化成对象
+with open("./config.json") as file:
+    DeseriliazeData = json.load(file)
+# print(DeseriliazeData)
+
 #数据库服务 初始化数据库
-DataBase = mdb.DB("10.11.144.31",27171,"MyDB")
+DataBase = mdb.DB(DeseriliazeData["DataBase"]["Ip"],DeseriliazeData["DataBase"]["Port"],DeseriliazeData["DataBase"]["DataBaseName"])
 
 #初始化minio
-minioclient.MinioServe('10.11.144.31:8001','cdr','cdrmm666!@#')
+minioclient.MinioServe(DeseriliazeData["MinioServer"]["Url"],DeseriliazeData["MinioServer"]["Account"],DeseriliazeData["MinioServer"]["Password"])
 
 #FastApi服务
 app = FastAPI()   

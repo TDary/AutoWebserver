@@ -10,7 +10,7 @@
 .search-button {
   background-color: lightblue; /* 设置背景颜色 */
   border: 1px solid #ccc; /* 设置边框样式 */
-  color: wheat; /* 设置文字颜色为白色 */
+  color: black; /* 设置文字颜色为白色 */
   border: none; /* 移除边框 */
   margin-top: 5px;
   padding: 5px; /* 设置内边距 */
