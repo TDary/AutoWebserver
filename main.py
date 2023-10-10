@@ -5,10 +5,17 @@ import uvicorn
 import os
 import json
 import Parse
-import minioclient
+import MinioServer.minioclient as minioclient
 from fastapi.middleware.cors import CORSMiddleware #解决跨域问题
 
-app = FastAPI()
+#数据库服务 初始化数据库
+DataBase = mdb.DB("10.11.144.31",27171,"MyDB")
+
+ #初始化minio
+minioclient.MinioServe('10.11.144.31:8001','cdr','cdrmm666!@#')
+
+#FastApi服务
+app = FastAPI()   
 app.add_middleware(  #解决跨域
     CORSMiddleware,
     # 允许跨域的源列表，例如 ["http://www.example.org"] 等等，["*"] 表示允许任何源
@@ -28,7 +35,7 @@ app.add_middleware(  #解决跨域
 
 @app.get("/GetCaseFlameGraph/{uid}")
 def ParseCaseFlameGraph(uid:str):
-    res = Parse.GetDataForFlameGraph(uid)
+    res = Parse.GetDataForFlameGraph(DataBase,uid)
     if res!=[]:
         resJson = {
             "uuid":uid,
@@ -44,7 +51,7 @@ def ParseCaseFlameGraph(uid:str):
 
 @app.post("/GetOneFunData/{uid}/{frame}/{type}")
 def ParseFunStackData(uid:str,frame:int,type:str):
-    res = mdb.GetCaseFrameCount(uid)
+    res = DataBase.GetCaseFrameCount(uid)
     for item in res:
         rawfiles = item["rawfiles"]
         stackData = Parse.GetFunStack(rawFiles=rawfiles,frame=frame,uid=uid,type=type)
@@ -64,7 +71,7 @@ def ParseFunStackData(uid:str,frame:int,type:str):
 
 @app.post("/GetFrameCount/{uid}")
 def ParseTotalFrame(uid:str):
-    res = mdb.GetCaseFrameCount(uid)
+    res = DataBase.GetCaseFrameCount(uid)
     for item in res:
         resForjson = {
             "uuid":uid,
@@ -81,9 +88,9 @@ def ParseTotalFrame(uid:str):
 #函数统计数据
 @app.post("/GetFunRow/{uid}/{funname}")
 def ParseFunRow(uid:str,funname:str):
-    res = mdb.GetFunRow(uid,funname)
+    res = DataBase.GetFunRow(uid,funname)
     for item in res:
-        frames = Parse.GetFormatData(uid,item["frames"])
+        frames = Parse.GetFormatData(DataBase,uid,item["frames"])
         resForjson = {
             "uuid":uid,
             "name":funname,
@@ -100,7 +107,7 @@ def ParseFunRow(uid:str,funname:str):
 #基础性能数据
 @app.post("/GetSimpleData/{uid}/{funname}")
 def ParseSimpleData(uid:str,funname:str):
-    res = mdb.GetSimple(uid,funname)
+    res = DataBase.GetSimple(uid,funname)
     for item in res:
         resForjson = {
             "uuid":uid,
@@ -116,7 +123,5 @@ def ParseSimpleData(uid:str,funname:str):
     return '{"code":404,"msg":"Not Found."}'
 
 if __name__ == '__main__':
-    mdb.InitDB()  #初始化数据库
-    minioclient.InitMinio() #初始化minio
     name_app = os.path.splitext(os.path.basename(__file__))[0]
     uvicorn.run(app=f"{name_app}:app", host="0.0.0.0",port=8600)

@@ -2,29 +2,37 @@ from ctypes import Array
 from pymongo import MongoClient
 
 db = None
+class DB:
+    def __init__(self,ip,port,database):
+        global db
+        self.ip = ip
+        self.port = port
+        self.database = database
+        mongoClient = MongoClient(self.ip,self.port)
+        db = mongoClient.get_database(self.database)
 
-def InitDB():
-    global mongoClient
-    global db
-    mongoClient = MongoClient("10.11.144.31",27171)
-    db = mongoClient.get_database("MyDB")
+    def GetFunRow(self,UID,funname:str):
+        self.uuid = UID
+        self.name = funname
+        collection = db.FunRow
+        result = collection.find({"uuid":self.uuid,"name":self.name})
+        return result
 
-def GetFunRow(UID:str,funname:str):
-    collection = db.FunRow
-    result = collection.find({"uuid":UID,"name":funname})
-    return result
+    def GetSimple(self,UID:str,Name:str):
+        self.uuid = UID
+        self.name = Name
+        collection = db.SimpleData
+        result = collection.find({"uuid":self.uuid,"name":self.name})
+        return result
 
-def GetSimple(UID:str,Name:str):
-    collection = db.SimpleData
-    result = collection.find({"uuid":UID,"name":Name})
-    return result
+    def GetCaseFrameCount(self,UID:str):
+        self.uuid = UID
+        collection = db.MainTable
+        result = collection.find({"uuid":self.uuid})
+        return result
 
-def GetCaseFrameCount(UID:str):
-    collection = db.MainTable
-    result = collection.find({"uuid":UID})
-    return result
-
-def GetCaseFunNamePath(UID:str):
-    collection = db.FunNamePath
-    result = collection.find({"uuid":UID})
-    return result
+    def GetCaseFunNamePath(self,UID:str):
+        self.uuid = UID
+        collection = db.FunNamePath
+        result = collection.find({"uuid":self.uuid})
+        return result

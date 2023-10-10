@@ -1,13 +1,12 @@
-import minioclient
+import MinioServer.minioclient as minioclient
 import os
 import caseflame_pb2
 import zipfile
 import traceback
 import MongoDB.init
-import json
 
-def GetFormatData(uid:str,data):
-    fCount = MongoDB.init.GetCaseFrameCount(uid)
+def GetFormatData(db:MongoDB.init.DB,uid:str,data):
+    fCount = db.GetCaseFrameCount(uid)
     frameCount = 0
     for f in fCount:
         frameCount = f["frametotalcount"]
@@ -32,22 +31,21 @@ def GetFormatData(uid:str,data):
             res.append(addObject)
     return res
 
-#todo:将源文件txt转换成svg
-def GetDataForFlameGraph(uuid:str):
+def GetDataForFlameGraph(db:MongoDB.init.DB,uuid:str):
     flamaeGraphObjes = minioclient.minioClient.list_objects(bucket_name=minioclient.analyzeBucket,prefix=uuid)
     uploadobjectName = uuid + "/" + uuid + ".txt"
     for item in flamaeGraphObjes:
         if item._object_name == uploadobjectName:
             return "http://10.11.144.31:8001/analyzedata/" +uploadobjectName
     result = []
-    funnamePath = MongoDB.init.GetCaseFunNamePath(uuid)
+    funnamePath = db.GetCaseFunNamePath(uuid)
     for fnP in funnamePath:
         res = fnP["stack"]
         for item in res:
             if ';' in item:
                 splitdata = item.split(';')
                 funname = splitdata[len(splitdata) - 1]
-                funrowData = MongoDB.init.GetFunRow(uuid,funname)
+                funrowData = db.GetFunRow(uuid,funname)
                 for data in funrowData:
                     value =data["avgvalidtime"]
                     if funname == "PlayerLoop":
@@ -58,7 +56,7 @@ def GetDataForFlameGraph(uuid:str):
                         result.append(addStr)
             else:
                 funname = item
-                funrowData = MongoDB.init.GetFunRow(uuid,funname)
+                funrowData = db.GetFunRow(uuid,funname)
                 for data in funrowData:
                     value =data["avgvalidtime"]
                     if funname == "PlayerLoop":
