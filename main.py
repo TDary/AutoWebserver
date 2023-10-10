@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
 import MongoDB.init as mdb
 import uvicorn
 import os

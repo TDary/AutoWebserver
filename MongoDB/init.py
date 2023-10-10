@@ -1,4 +1,3 @@
-from ctypes import Array
 from pymongo import MongoClient
 
 db = None
