@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware #解决跨域问题
 #数据库服务 初始化数据库
 DataBase = mdb.DB("10.11.144.31",27171,"MyDB")
 
- #初始化minio
+#初始化minio
 minioclient.MinioServe('10.11.144.31:8001','cdr','cdrmm666!@#')
 
 #FastApi服务
