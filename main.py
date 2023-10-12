@@ -38,6 +38,43 @@ app.add_middleware(  #解决跨域
     # max_age=1000
 )
 
+
+#获取案例，判断案例存不存在
+@app.get("/GetAllCase/")
+def ParseGetAllCase():
+    res = DataBase.GetAllCase()
+    response = {}
+    allcase = []
+    for item in res:
+        resJson = {
+            "uuid":item["uuid"],
+            "casename":item["casename"]
+        }
+        allcase.append(resJson)
+    response = {
+        "code":200,
+        "msg":allcase
+    }
+    resData = json.dumps(response)
+    return resData
+
+#获取案例，判断案例存不存在
+@app.get("/GetCase/{uid}")
+def ParseGetCase(uid:str):
+    res = Parse.GetCaseExist(DataBase,uid)
+    if res == True:
+        resJson = {
+            "uuid":uid,
+            "state":res
+        }
+        response = {
+            "code":200,
+            "msg":resJson
+        }
+        resData = json.dumps(response)
+        return resData
+    return '{"code":404,"msg":"This Case is None."}'
+
 #获取整体案例火焰图
 @app.get("/GetCaseFlameGraph/{uid}")
 def ParseCaseFlameGraph(uid:str):
@@ -47,11 +84,11 @@ def ParseCaseFlameGraph(uid:str):
             "uuid":uid,
             "url":res
         }
-        res = {
+        response = {
             "code":200,
             "msg":resJson
         }
-        resData = json.dumps(res)
+        resData = json.dumps(response)
         return resData
     return '{"code":404,"msg":"Data is None."}'
 
@@ -68,11 +105,11 @@ def ParseFunStackData(uid:str,frame:int,type:str):
             "uuid":uid,
             "funstack":stackData
         }
-        res = {
+        response = {
             "code":200,
             "msg":resJson
         }
-        resData = json.dumps(res)
+        resData = json.dumps(response)
         return resData
     return '{"code":404,"msg":"Not Found."}'
 
@@ -85,11 +122,11 @@ def ParseTotalFrame(uid:str):
             "uuid":uid,
             "frametotalcount":item["frametotalcount"]
         }
-        res = {
+        response = {
             "code":200,
             "msg":resForjson
         }
-        resData = json.dumps(res)
+        resData = json.dumps(response)
         return resData
     return '{"code":404,"msg":"Not Found."}'
 
@@ -104,11 +141,11 @@ def ParseFunRow(uid:str,funname:str):
             "name":funname,
             "frames":frames
         }
-        res = {
+        response = {
             "code":200,
             "msg":resForjson
         }
-        resData = json.dumps(res)
+        resData = json.dumps(response)
         return resData
     return '{"code":404,"msg":"Not Found."}'
 
@@ -122,11 +159,11 @@ def ParseSimpleData(uid:str,funname:str):
             "name":funname,
             "values":item["values"]
         }
-        res = {
+        response = {
             "code":200,
             "msg":resForjson
         }
-        resData = json.dumps(res)
+        resData = json.dumps(response)
         return resData
     return '{"code":404,"msg":"Not Found."}'
 

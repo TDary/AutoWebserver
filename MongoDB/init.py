@@ -36,3 +36,8 @@ class DB:
         collection = db.FunNamePath
         result = collection.find({"uuid":self.uuid})
         return result
+
+    def GetAllCase(self):
+        collection = db.MainTable
+        result = collection.find()
+        return result

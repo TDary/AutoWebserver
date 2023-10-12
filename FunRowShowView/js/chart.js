@@ -2,35 +2,13 @@ var timedom = document.getElementById('timecontainer');
 var gcdom = document.getElementById('gccontainer');
 var calldom = document.getElementById('callcontainer');
 var buttonDom = document.getElementById('button-id');
-var inputUID = document.getElementById('inputuid');
+// 获取 URL 参数
+const urlParams = new URLSearchParams(window.location.search);
+// 提取传递的值
+const uuidValue = urlParams.get('uuid');
+console.log("uuid:"+uuidValue);
+var inputUID = uuidValue;
 var inputFunName = document.getElementById('inputfunname');
-
-// var pages = document.getElementsByClassName('page'); // 获取所有页面的元素
-// function ShowNextPage() {
-//   var currentPage = getCurrentPage(); // 获取当前显示的页面索引
-//   if (currentPage < pages.length - 1) {
-//     pages[currentPage].style.display = 'none'; // 隐藏当前页面
-//     pages[currentPage + 1].style.display = 'block'; // 显示下一页
-//   }
-// }
-
-// function GetCurrentPage() {
-//   for (var i = 0; i < pages.length; i++) {
-//     if (pages[i].style.display === 'block') {
-//       return i; // 返回当前显示的页面索引
-//     }
-//   }
-// }
-
-// function showFloatingAlert() {
-//   var floatingAlert = document.getElementById('floating-alert');
-//   floatingAlert.style.display = 'block'; // 显示悬浮窗口
-// }
-
-// function hideFloatingAlert() {
-//   var floatingAlert = document.getElementById('floating-alert');
-//   floatingAlert.style.display = 'none'; // 隐藏悬浮窗口
-// }
 
 function AlertError(msg) {
             // 使用 SweetAlert 替代 alert
@@ -102,7 +80,7 @@ async function GetOneStackData(uuid,frame,type){
 buttonDom.addEventListener('click',function(){
 	// 构造请求数据获取详细帧数据
 	var funrowurl = 'http://10.11.144.31:8600/GetFunRow/';  // 请求的URL
-	funrowurl += inputUID.value+'/'+inputFunName.value;
+	funrowurl += inputUID+'/'+inputFunName.value;
 	async function fetchframeData() {
 	  try {
 	    const response = await fetch(funrowurl,{method:'POST',headers:
@@ -159,7 +137,7 @@ buttonDom.addEventListener('click',function(){
 	
 	//获取主要总帧数构造函数
 	var frameurl = 'http://10.11.144.31:8600/GetFrameCount/';  // 请求的URL
-	frameurl += inputUID.value;
+	frameurl += inputUID;
 	async function fetchframecountData(inputdata) {
 	  try {
 	    const response = await fetch(frameurl,{method:'POST'});
@@ -210,6 +188,21 @@ buttonDom.addEventListener('click',function(){
 		  
 		  //函数耗时表
 		  option = {
+		  visualMap: [
+			  {
+				show: false,
+				type: 'continuous',
+				seriesIndex: 0,
+				min: 0,
+				max: 100,
+				inRange: {
+				      color: ['#c2cbff', '#006edd'] // 可视化范围内的颜色渐变
+				    },
+				textStyle: {
+				      color: '#333' // 文字的颜色
+				    },
+			  }
+			],
 		  title: {
 		  text: '函数耗时表(ms)',
 		  },
@@ -226,37 +219,96 @@ buttonDom.addEventListener('click',function(){
 		  containLabel: true
 		  },
 		  toolbox: {
-		  feature: {
-			saveAsImage: {}
-		  }
+			show:true,
+			feature: {
+				magicType: {show: true, type: ['line', 'bar']},
+				dataZoom:
+					{                        
+						realtime: false,                         
+						yAxisIndex: 'none',                      
+					},                    
+				restore: {},
+				saveAsImage: {},
+			},
 		  },
 		  xAxis: {
 		  type: 'category',
 		  boundaryGap: false,
-		  data: frameTotal
+		  data: frameTotal,
 		  },
 		  yAxis: {
 		  type: 'value',
 		  name:'单位:ms'
 		  },
+		  dataZoom:
+		  [
+			{type: 'inside'},  //用于添加滚轮缩放
+		  	{type:'slider' },  //用于添加滑动条缩放，
+		  ],
 		  series: [
 		  {
 			name: result.prop2,
 			type: 'line',
 			stack: 'Total',
-			data: result.prop3
+			data: result.prop3,
+			markPoint: {
+			        data: [
+			        { 
+						type: 'max', 
+						name: '峰值',
+						itemStyle: {
+						        color: '#ff7552' // 标记点的颜色
+						    }
+					}
+			        ],
+			},
+			markLine:{
+				data: [
+				  { type: 'average', name: '平均值' }
+				],
+			},
 		  },
 		  {
 			name: '(SelfTime)'+result.prop2,
 			type: 'line',
 			stack: 'Total',
-			data: result.prop4
-		  },
-		  ]
-		  };
+			data: result.prop4,
+			markPoint: {
+			        data: [
+			        { 
+						type: 'max',
+						name: '最大值',
+						itemStyle: {
+						        color: '#ff7552' // 标记点的颜色
+						    }
+					}
+			        ],
+			},
+			markLine:{
+				data: [
+				  { type: 'average', name: '平均值' }
+				],
+			},
+		  },]
+		};
 		  
 		  //gc表(KB)
 		  gcoption = {
+		  visualMap: [
+					  {
+						show: false,
+						type: 'continuous',
+						seriesIndex: 0,
+						min: 0,
+						max: 100,
+						inRange: {
+							  color: ['#c2cbff', '#006edd'] // 可视化范围内的颜色渐变
+							},
+						textStyle: {
+							  color: '#333' // 文字的颜色
+							},
+					  }
+		  ],
 		  title: {
 		  text: '函数GC表(KB)',
 		  },
@@ -273,9 +325,17 @@ buttonDom.addEventListener('click',function(){
 		  containLabel: true
 		  },
 		  toolbox: {
-		  feature: {
-			saveAsImage: {}
-		  }
+			show:true,
+			feature: {
+				magicType: {show: true, type: ['line', 'bar']},
+				dataZoom:
+					{                        
+						realtime: false,                         
+						yAxisIndex: 'none',                      
+					},                    
+				restore: {},
+				saveAsImage: {},
+			},
 		  },
 		  xAxis: {
 		  type: 'category',
@@ -286,18 +346,53 @@ buttonDom.addEventListener('click',function(){
 		  type: 'value',
 		  name:'单位:KB'
 		  },
+		  dataZoom:
+		  [
+		  	{type: 'inside'},  //用于添加滚轮缩放
+		  	{type:'slider' },  //用于添加滑动条缩放，
+		  ],
 		  series: [
-		  {
-			name: result.prop2,
-			type: 'line',
-			stack: 'Total',
-			data: result.prop5
-		  },
-		  ]
+			  {
+				name: result.prop2,
+				type: 'line',
+				stack: 'Total',
+				data: result.prop5,
+				markPoint: {
+				        data: [
+				          { 
+							type: 'max',
+							name: '最大值',
+							itemStyle: {
+						        color: '#ff7552' // 标记点的颜色
+						    },
+						  }
+				        ],
+				},
+				markLine:{
+					data: [
+					  { type: 'average', name: '平均值' }
+					],
+				},
+			  },]
 		  };
 		  
 		  //gc表(KB)
 		  calloption = {
+		  visualMap: [
+		  			  {
+		  				show: false,
+		  				type: 'continuous',
+		  				seriesIndex: 0,
+		  				min: 0,
+		  				max: 80,
+		  				inRange: {
+		  				      color: ['#6670ff', '#006edd'] // 可视化范围内的颜色渐变
+		  				    },
+		  				textStyle: {
+		  				      color: '#333' // 文字的颜色
+		  				    },
+		  			  }
+		  ],
 		  title: {
 		  text: '函数Calls表(次)',
 		  },
@@ -314,9 +409,17 @@ buttonDom.addEventListener('click',function(){
 		  containLabel: true
 		  },
 		  toolbox: {
-		  feature: {
-			saveAsImage: {}
-		  }
+			  show:true,
+			  feature: {
+				magicType: {show: true, type: ['line', 'bar']},
+				dataZoom:
+					{                        
+						realtime: false,                         
+						yAxisIndex: 'none',                      
+					},                    
+				restore: {},
+				saveAsImage: {},
+			  },
 		  },
 		  xAxis: {
 		  type: 'category',
@@ -327,22 +430,26 @@ buttonDom.addEventListener('click',function(){
 		  type: 'value',
 		  name:'单位:次数'
 		  },
+		  dataZoom:
+		  [
+		  	{type: 'inside'},  //用于添加滚轮缩放
+		  	{type:'slider' },  //用于添加滑动条缩放，
+		  ],
 		  series: [
 		  {
 			name: result.prop2,
 			type: 'line',
 			stack: 'Total',
 			data: result.prop6
-		  },
-		  ]
-		  };
+		  },]
+		};
 		  
 		  if (option && typeof option === 'object') {
 		  timeChart.setOption(option);
 		  timeChart.on('click',function(params){
 			  //帧号params.dataIndex 帧数据params.data
 			  var typedata = "timems";
-			  var resDa = GetOneStackData(inputUID.value,params.dataIndex+1,typedata);
+			  var resDa = GetOneStackData(inputUID,params.dataIndex+1,typedata);
 			  PrintDetailFun(resDa,params.dataIndex+1,inputFunName.value,typedata);
 		  });
 		  }
@@ -351,7 +458,7 @@ buttonDom.addEventListener('click',function(){
 		  gcChart.on('click',function(params){
 			  //帧号params.dataIndex 帧数据params.data
 			  var typedata = "gcalloc";
-			  var resDa = GetOneStackData(inputUID.value,params.dataIndex+1,typedata);
+			  var resDa = GetOneStackData(inputUID,params.dataIndex+1,typedata);
 			  PrintDetailFun(resDa,params.dataIndex+1,inputFunName.value,typedata);
 		  });
 		  }
@@ -360,7 +467,7 @@ buttonDom.addEventListener('click',function(){
 		  callChart.on('click',function(params){
 			  //帧号params.dataIndex 帧数据params.data
 			  var typedata = "calls";
-			  var resDa = GetOneStackData(inputUID.value,params.dataIndex+1,typedata);
+			  var resDa = GetOneStackData(inputUID,params.dataIndex+1,typedata);
 			  PrintDetailFun(resDa,params.dataIndex+1,inputFunName.value,typedata);
 		  });
 		  }

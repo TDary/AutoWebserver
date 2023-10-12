@@ -5,6 +5,14 @@ import zipfile
 import traceback
 import MongoDB.init
 
+#判断单个案例存不存在
+def GetCaseExist(db:MongoDB.init.DB,uid:str) -> bool:
+    res = db.GetCaseFrameCount(uid)
+    for case in res:
+        if case["state"] == 1:
+            return True
+    return False
+
 #从数据库获取数据
 def GetFormatData(db:MongoDB.init.DB,uid:str,data):
     fCount = db.GetCaseFrameCount(uid)
