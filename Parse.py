@@ -46,7 +46,7 @@ def GetDataForFlameGraph(db:MongoDB.init.DB,uuid:str):
     uploadobjectName = uuid + "/" + uuid + ".txt"
     for item in flamaeGraphObjes:
         if item._object_name == uploadobjectName:
-            return "http://10.11.144.31:8001/analyzedata/" +uploadobjectName
+            return "http://10.11.145.125:8001/analyzedata/" +uploadobjectName
     result = []
     funnamePath = db.GetCaseFunNamePath(uuid)
     for fnP in funnamePath:
@@ -80,7 +80,7 @@ def GetDataForFlameGraph(db:MongoDB.init.DB,uuid:str):
             file.writelines(line + "\n" for line in result)
         minioclient.minioClient.fput_object(bucket_name=minioclient.analyzeBucket,object_name=uploadobjectName,file_path=writeFilepath,content_type="application/txt")
         os.remove(writeFilepath)
-        return "http://10.11.144.31:8001/analyzedata/"+ uploadobjectName #url
+        return "http://10.11.145.125:8001/analyzedata/"+ uploadobjectName #url
 
 #解压缩
 def unzip_file(zip_path, extract_dir):

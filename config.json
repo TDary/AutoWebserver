@@ -1,11 +1,11 @@
 {
     "DataBase":{
-            "Ip":"10.11.144.31",
+            "Ip":"10.11.145.125",
             "Port":27171,
             "DataBaseName":"MyDB"
         },
     "MinioServer":{
-        "Url":"10.11.144.31:8001",
+        "Url":"10.11.145.125:8001",
         "Account":"cdr",
         "Password":"cdrmm666!@#",
         "RawBucket" : "rawdata",
