@@ -47,7 +47,7 @@ function PrintDetailFun(datainfo,frame,funname,type){
 }
 
 async function GetOneStackData(uuid,frame,type){
-	var url = 'http://10.11.144.31:8600/GetOneFunData/';  // 请求的URL
+	var url = 'http://10.11.145.125:8600/GetOneFunData/';  // 请求的URL
 	url += uuid+'/'+frame+'/'+type;
 	try {
 	  const response = await fetch(url,{method:'POST',headers:
@@ -79,7 +79,7 @@ async function GetOneStackData(uuid,frame,type){
 
 buttonDom.addEventListener('click',function(){
 	// 构造请求数据获取详细帧数据
-	var funrowurl = 'http://10.11.144.31:8600/GetFunRow/';  // 请求的URL
+	var funrowurl = 'http://10.11.145.125:8600/GetFunRow/';  // 请求的URL
 	funrowurl += inputUID+'/'+inputFunName.value;
 	async function fetchframeData() {
 	  try {
@@ -136,7 +136,7 @@ buttonDom.addEventListener('click',function(){
 	}
 	
 	//获取主要总帧数构造函数
-	var frameurl = 'http://10.11.144.31:8600/GetFrameCount/';  // 请求的URL
+	var frameurl = 'http://10.11.145.125:8600/GetFrameCount/';  // 请求的URL
 	frameurl += inputUID;
 	async function fetchframecountData(inputdata) {
 	  try {

@@ -11,7 +11,7 @@ buttonDom.addEventListener('click',function(){
 	var frameTotal =  [];
 	
 	// // 构造请求数据
-	var funrowurl = 'http://10.11.144.31:8600/GetSimpleData/';  // 请求的URL
+	var funrowurl = 'http://10.11.145.125:8600/GetSimpleData/';  // 请求的URL
 	funrowurl += inputUID.value+'/'+inputFunName.value;
 	async function fetchframeData() {
 	  try {
@@ -38,7 +38,7 @@ buttonDom.addEventListener('click',function(){
 	fetchframeData();//执行发送请求
 	
 	//获取主要总帧数  构造请求数据
-	var frameurl = 'http://10.11.144.31:8600/GetFrameCount/';  // 请求的URL
+	var frameurl = 'http://10.11.145.125:8600/GetFrameCount/';  // 请求的URL
 	frameurl += inputUID.value;
 	async function fetchframecountData() {
 	  try {
