@@ -54,7 +54,7 @@ function PrintAlert(msg) {
         }
 
 async function GetCase(uuid){
-	var url = 'http://10.11.144.31:8600/GetCase/' + uuid;  // 请求的URL;
+	var url = 'http://10.11.145.125:8600/GetCase/' + uuid;  // 请求的URL;
 	try {
 	  const response = await fetch(url,{method:'GET',headers:
 				{'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',
@@ -82,7 +82,7 @@ async function GetCase(uuid){
 }
 
 async function GetFlameGragphData(uuid){
-	var url = 'http://10.11.144.31:8600/GetCaseFlameGraph/' + uuid;  // 请求的URL;
+	var url = 'http://10.11.145.125:8600/GetCaseFlameGraph/' + uuid;  // 请求的URL;
 	try {
 	  const response = await fetch(url,{method:'GET',headers:
 				{'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',
